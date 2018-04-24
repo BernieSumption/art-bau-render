@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Art | Bau | Render</title>
+  <style>
+    html {
+      width: 100%;
+      height: 100%;
+    }
+    body {
+      width: 100%;
+      height: 100%;
+      background: #f9efd2 url("./art-bau-render-3.png") center no-repeat;
+      background-size: contain;
+    }
+  </style>
+</head>
+<body>
+<script defer>
+  var loop = audio("sound/loop1.mp3");
+  loop.autoplay = true;
+  loop.loop = true;
+  
+  var men = [
+    audio("sound/m1.mp3"),
+    audio("sound/m2.mp3"),
+    audio("sound/m3.mp3"),
+    audio("sound/m4.mp3")
+  ];
+  
+  var women = [
+    audio("sound/f1.mp3"),
+    audio("sound/f2.mp3"),
+    audio("sound/f3.mp3"),
+    audio("sound/f4.mp3")
+  ];
+  
+  var currentGroup = men;
+  var currentAudio = pick(men);
+  var waitLoops = 1;
+  
+  var firstClick = true
+  
+  document.body.onclick = function() {
+    if (firstClick) {
+      var all = men.concat(women);
+      for (var i=0; i<all.length; i++) {
+        if (all[i].paused) {
+          all[i].play();
+          all[i].pause();
+        }
+      }
+      firstClick = false;
+    }
+    if (loop.paused) {
+      loop.play();
+    } else {
+      loop.pause();
+    }
+  }
+  
+  loop.onplaying = function(e) {
+    if (waitLoops !== 0) {
+      --waitLoops;
+      return;
+    }
+    if (currentAudio) {
+      currentAudio.pause();
+    }
+    currentGroup = currentGroup === men ? women : men;
+    currentAudio = pick(currentGroup);
+    currentAudio.currentTime = 0;
+    currentAudio.play();
+  }
+  
+  
+  function audio(src) {
+    var a = document.createElement("audio");
+    a.src = src;
+    a.preload = true;
+    document.body.appendChild(a);
+    return a;
+  }
+  function pick(group) {
+    return group[Math.floor(Math.random() * group.length)];
+  }
+</script>
+</body>
+</html>
